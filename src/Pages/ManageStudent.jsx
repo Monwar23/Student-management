@@ -204,7 +204,7 @@ const ManageStudent = () => {
                         <button
                             key={index}
                             onClick={() => handlePageChange(index + 1)}
-                            className={`px-4 py-2 mx-1 bg-gray-200 rounded ${currentPage === index + 1 ? 'bg-blue-600 text-white' : 'hover:bg-blue-600 hover:text-white'}`}
+                            className={`px-4 py-2 mx-1 bg-gray-200 rounded ${currentPage === index + 1 ? 'bg-[#F33823] text-white hover:bg-white hover:text-[#F33823] border border-[#F33823]' : 'hover:bg-[#F33823] hover:text-white border border-[#F33823]'}`}
                         >
                             {index + 1}
                         </button>
