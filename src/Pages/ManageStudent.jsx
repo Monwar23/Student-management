@@ -11,7 +11,7 @@ const ManageStudent = () => {
     const itemsPerPage = 10;
 
     useEffect(() => {
-        fetch(`http://localhost:5000/students?name=${searchTerm}&sort=${sortOrder}`)
+        fetch(`https://student-management-server-sigma.vercel.app/students?name=${searchTerm}&sort=${sortOrder}`)
             .then(res => res.json())
             .then(data => setStudents(data));
     }, [control, searchTerm, sortOrder]);
@@ -51,7 +51,7 @@ const ManageStudent = () => {
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`http://localhost:5000/students/${_id}`, {
+                fetch(`https://student-management-server-sigma.vercel.app/students/${_id}`, {
                     method: 'DELETE'
                 })
                 .then(res => res.json())
@@ -81,7 +81,7 @@ const ManageStudent = () => {
             pincode: e.target.pincode.value
         };
 
-        fetch(`http://localhost:5000/students/${selectedStudent._id}`, {
+        fetch(`https://student-management-server-sigma.vercel.app/students/${selectedStudent._id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'

@@ -6,7 +6,7 @@ const ErrorPage = () => {
     return (
         <div>
          <Helmet>
-                <title>Student | ErrorPage</title>
+                <title>StudentData | ErrorPage</title>
             </Helmet>
          <div className="flex flex-col items-center justify-center h-screen">
         <h2 className="text-4xl font-bold">404 - Not Found</h2>

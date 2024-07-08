@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,7 +11,7 @@ const AddStudent = () => {
         firstName: '',
         middleName: '',
         lastName: '',
-        studentClass: '1',
+        class: '1',
         division: 'A',
         rollNumber: '',
         addressLine1: '',
@@ -43,7 +44,7 @@ const AddStudent = () => {
         e.preventDefault();
         console.log(formData);
 
-        fetch('http://localhost:5000/addStudents', {
+        fetch('https://student-management-server-sigma.vercel.app/addStudents', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -64,9 +65,13 @@ const AddStudent = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-md shadow-md">
-            <h2 className="text-2xl font-bold mb-6">Add New Student</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+       <div>
+         <Helmet>
+                <title>StudentData | Add student</title>
+            </Helmet>
+        <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-md shadow-md">
+            <h2 className="text-2xl font-bold mb-6 text-center">Add New Student</h2>
+            <form onSubmit={handleSubmit} className=" grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div>
                     <label className="block mb-1">
                         First Name:
@@ -248,6 +253,7 @@ const AddStudent = () => {
             </form>
             <ToastContainer></ToastContainer>
         </div>
+       </div>
     );
 };
 

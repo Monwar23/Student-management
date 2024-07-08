@@ -22,7 +22,7 @@ const router = createBrowserRouter([
             {
                 path: '/manageStudent',
                 element: <ManageStudent></ManageStudent>,
-                loader:()=>fetch('http://localhost:5000/students')
+                loader:()=>fetch('https://student-management-server-sigma.vercel.app/students')
             },
 
         ]
