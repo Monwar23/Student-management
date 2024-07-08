@@ -33,7 +33,7 @@ const Login = () => {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
             <Helmet>
-                <title>Student | Login</title>
+                <title>StudentData | Login</title>
             </Helmet>
             <h1 className="mb-6 text-3xl font-bold text-gray-800">Login Now</h1>
             <button

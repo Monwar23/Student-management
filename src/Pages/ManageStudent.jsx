@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import Modal from 'react-modal';
 import Swal from 'sweetalert2';
 
@@ -121,6 +122,9 @@ const ManageStudent = () => {
 
     return (
         <div className="p-4">
+            <Helmet>
+                <title>StudentData | Manage Student</title>
+            </Helmet>
             <div className="max-w-7xl mx-auto">
                 <div className="flex justify-center mb-4 gap-5">
                     <div>
