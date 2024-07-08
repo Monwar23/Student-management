@@ -22,6 +22,7 @@ const router = createBrowserRouter([
             {
                 path: '/manageStudent',
                 element: <ManageStudent></ManageStudent>,
+                loader:()=>fetch('http://localhost:5000/students')
             },
 
         ]
