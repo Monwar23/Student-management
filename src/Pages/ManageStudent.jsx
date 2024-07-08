@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { AiOutlineEdit } from 'react-icons/ai';
+import { BiShow } from 'react-icons/bi';
+import { HiOutlineSearch } from 'react-icons/hi';
+import { RiDeleteBinLine } from 'react-icons/ri';
 import Modal from 'react-modal';
 import Swal from 'sweetalert2';
 
@@ -10,6 +14,17 @@ const ManageStudent = () => {
     const [sortOrder, setSortOrder] = useState('asc');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true
+    });
 
     useEffect(() => {
         fetch(`https://student-management-server-sigma.vercel.app/students?name=${searchTerm}&sort=${sortOrder}`)
@@ -55,13 +70,13 @@ const ManageStudent = () => {
                 fetch(`https://student-management-server-sigma.vercel.app/students/${_id}`, {
                     method: 'DELETE'
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.deletedCount > 0) {
-                        Swal.fire("Deleted!", "Your file has been deleted.", "success");
-                        setControl(!control); 
-                    }
-                });
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.deletedCount > 0) {
+                            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                            setControl(!control);
+                        }
+                    });
             }
         });
     };
@@ -74,7 +89,7 @@ const ManageStudent = () => {
             lastName: e.target.lastName.value,
             studentClass: e.target.studentClass.value,
             division: e.target.division.value,
-            rollNumber: e.target.rollNumber.value,
+            rollNumber: parseInt(e.target.rollNumber.value),
             addressLine1: e.target.addressLine1.value,
             addressLine2: e.target.addressLine2.value,
             landmark: e.target.landmark.value,
@@ -89,14 +104,14 @@ const ManageStudent = () => {
             },
             body: JSON.stringify(updatedStudent)
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.modifiedCount > 0) {
-                Swal.fire("Updated!", "Student details have been updated.", "success");
-                setControl(!control); 
-                closeEditModal();
-            }
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.modifiedCount > 0) {
+                    Swal.fire("Updated!", "Student details have been updated.", "success");
+                    setControl(!control);
+                    closeEditModal();
+                }
+            });
     };
 
     const handleSearch = (e) => {
@@ -120,51 +135,65 @@ const ManageStudent = () => {
     const currentItems = students.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(students.length / itemsPerPage);
 
+    const convertToRoman = (num) => {
+        const romanNumeralMap = {
+            1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI',
+            7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X', 11: 'XI', 12: 'XII'
+        };
+        return romanNumeralMap[num] || num;
+    };
+
     return (
         <div className="p-4">
             <Helmet>
                 <title>StudentData | Manage Student</title>
             </Helmet>
             <div className="max-w-7xl mx-auto">
-                <div className="flex justify-center mb-4 gap-5">
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Search by name"
-                            value={searchTerm}
-                            onChange={handleSearch}
-                            className="p-2 border rounded mr-2"
-                        />
-                        <select value={sortOrder} onChange={handleSortChange} className="p-2 border rounded">
-                            <option value="asc">Ascending by Roll</option>
-                            <option value="desc">Descending by Roll</option>
+                <div className="md:flex justify-center mb-4 gap-3">
+                    <h2 className="text-2xl font-bold mb-6">Manage Student</h2>
+                    <div className='md:flex gap-2'>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Search by name"
+                                value={searchTerm}
+                                onChange={handleSearch}
+                                className="py-5 border text-gray-500 border-gray-200 rounded-md pl-6"
+                            />
+                            <HiOutlineSearch className="absolute top-1/2 transform -translate-y-1/2 text-gray-500 pl-1 text-xl" />
+                        </div>
+                        <select value={sortOrder} onChange={handleSortChange} className="p-1 border border-gray-200 text-gray-500 mt-2 md:mt-0 rounded-md">
+                            <option value="asc">Filter by Roll</option>
+                            <option value="desc">Filter by Roll</option>
                         </select>
                     </div>
                     <div>
-                        <button onClick={handlePrint} className="px-4 py-2 bg-blue-600 text-white rounded">Print</button>
+                        <button className="px-4 py-2 border-2 border-gray-200 text-gray-500 rounded-md mt-2 md:mt-0">Export</button>
                     </div>
+                    <div>
+                        <button onClick={handlePrint} className="px-4 py-2 border-2 border-gray-200 text-gray-500  rounded-md mt-2 md:mt-0">Print</button>
+                    </div>
+                    <p className="text-gray-600 mt-2 md:mt-0">{formattedDate}</p>
                 </div>
-                <table className="mx-auto divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                <table className=" lg:min-w-[990px] divide-y border divide-gray-200 rounded-md">
+                    <thead className="bg-[#F33823]">
                         <tr>
-                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Student Name</th>
-                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
-                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Division</th>
-                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Roll Number</th>
-                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Name</th>
+                            <th className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Class</th>
+                            <th className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Roll No.</th>
+                            <th className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">VIew/Edit/Delete</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {currentItems.map((student) => (
-                            <tr key={student._id}>
+                        {currentItems.map((student, index) => (
+                            <tr key={student._id} className={index % 2 === 0 ? 'bg-white' : 'bg-[#FFF6F5]'}>
                                 <td className="px-6 py-4 text-center whitespace-nowrap">{student.firstName} {student.middleName} {student.lastName}</td>
-                                <td className="px-6 py-4 text-center whitespace-nowrap">{student.studentClass}</td>
-                                <td className="px-6 py-4 text-center whitespace-nowrap">{student.division}</td>
+                                <td className="px-6 py-4 text-center whitespace-nowrap">{convertToRoman(student.studentClass)}-{student.division}</td>
                                 <td className="px-6 py-4 text-center whitespace-nowrap">{student.rollNumber}</td>
                                 <td className="px-6 py-4 text-center whitespace-nowrap">
-                                    <button onClick={() => openViewModal(student)} className="text-blue-600 hover:text-blue-900">View</button>
-                                    <button onClick={() => openEditModal(student)} className="ml-4 text-yellow-600 hover:text-yellow-900">Edit</button>
-                                    <button onClick={() => handleDelete(student._id)} className="ml-4 text-red-600 hover:text-red-900">Delete</button>
+                                    <button onClick={() => openViewModal(student)} className="text-[#F33823] hover:text-blue-500"><BiShow /></button>
+                                    <button onClick={() => openEditModal(student)} className="ml-4 text-[#F33823] hover:text-yellow-500"><AiOutlineEdit /></button>
+                                    <button onClick={() => handleDelete(student._id)} className="ml-4 text-[#F33823] hover:text-red-500"><RiDeleteBinLine /></button>
                                 </td>
                             </tr>
                         ))}
@@ -188,59 +217,29 @@ const ManageStudent = () => {
                     isOpen={viewModalIsOpen}
                     onRequestClose={closeViewModal}
                     contentLabel="View Student"
-                    className="p-4 bg-white border rounded shadow-md max-w-xl mx-auto mt-10"
+                    className="p-4 bg-white border rounded-lg shadow-lg max-w-3xl mx-auto mt-10"
                     overlayClassName="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center"
                 >
-                    <h2 className="text-xl font-semibold mb-4">Student Details</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <p className="font-medium">First Name:</p>
-                            <p>{selectedStudent.firstName}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">Middle Name:</p>
-                            <p>{selectedStudent.middleName}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">Last Name:</p>
-                            <p>{selectedStudent.lastName}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">Class:</p>
-                            <p>{selectedStudent.studentClass}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">Division:</p>
-                            <p>{selectedStudent.division}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">Roll Number:</p>
-                            <p>{selectedStudent.rollNumber}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">Address Line 1:</p>
-                            <p>{selectedStudent.addressLine1}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">Address Line 2:</p>
-                            <p>{selectedStudent.addressLine2}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">Landmark:</p>
-                            <p>{selectedStudent.landmark}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">City:</p>
-                            <p>{selectedStudent.city}</p>
-                        </div>
-                        <div>
-                            <p className="font-medium">Pincode:</p>
-                            <p>{selectedStudent.pincode}</p>
-                        </div>
+                    <h2 className="text-2xl font-bold mb-4">View Student Details</h2>
+                    <div className="space-y-2">
+                        <p><strong>Name:</strong> {selectedStudent.firstName} {selectedStudent.middleName} {selectedStudent.lastName}</p>
+                        <p><strong>Class:</strong> {convertToRoman(selectedStudent.studentClass)}-{selectedStudent.division}</p>
+                        <p><strong>Roll Number:</strong> {selectedStudent.rollNumber}</p>
+                        <p><strong>Address Line 1:</strong> {selectedStudent.addressLine1}</p>
+                        <p><strong>Address Line 2:</strong> {selectedStudent.addressLine2}</p>
+                        <p><strong>Landmark:</strong> {selectedStudent.landmark}</p>
+                        <p><strong>City:</strong> {selectedStudent.city}</p>
+                        <p><strong>Pincode:</strong> {selectedStudent.pincode}</p>
                     </div>
-                    <button onClick={closeViewModal} className="mt-4 px-4 py-2 bg-gray-200 rounded">Close</button>
+                    <button
+                        onClick={closeViewModal}
+                        className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                    >
+                        Close
+                    </button>
                 </Modal>
             )}
+
 
             {selectedStudent && (
                 <Modal
@@ -250,67 +249,73 @@ const ManageStudent = () => {
                     className="p-4 bg-white border rounded shadow-md max-w-xl mx-auto mt-10"
                     overlayClassName="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center"
                 >
-                    <h2 className="text-xl font-semibold mb-4">Edit Student Details</h2>
-                    <form onSubmit={handleEditSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label className="font-medium">First Name:</label>
-                            <input type="text" name="firstName" defaultValue={selectedStudent.firstName} className="w-full px-2 py-1 border rounded"/>
+                    <h2 className="text-xl font-bold mb-4">Edit Student Info</h2>
+                    <form onSubmit={handleEditSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="firstName">First Name:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="text" id="firstName" name="firstName" defaultValue={selectedStudent.firstName} required />
                         </div>
-                        <div>
-                            <label className="font-medium">Middle Name:</label>
-                            <input type="text" name="middleName" defaultValue={selectedStudent.middleName} className="w-full px-2 py-1 border rounded"/>
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="middleName">Middle Name:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="text" id="middleName" name="middleName" defaultValue={selectedStudent.middleName} required />
                         </div>
-                        <div>
-                            <label className="font-medium">Last Name:</label>
-                            <input type="text" name="lastName" defaultValue={selectedStudent.lastName} className="w-full px-2 py-1 border rounded"/>
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="lastName">Last Name:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="text" id="lastName" name="lastName" defaultValue={selectedStudent.lastName} required />
                         </div>
-                        <div>
-                            <label className="font-medium">Class:</label>
-                            <select name="studentClass" defaultValue={selectedStudent.studentClass} className="w-full px-2 py-1 border rounded">
-                                {Array.from({ length: 12 }, (_, index) => (
-                                    <option key={index + 1} value={index + 1}>{index + 1}</option>
-                                ))}
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="studentClass">Class:</label>
+                            <select className="w-full p-2 border border-gray-200 rounded" id="studentClass" name="studentClass" defaultValue={selectedStudent.studentClass} required>
+                                <option value="1">I</option>
+                                <option value="2">II</option>
+                                <option value="3">III</option>
+                                <option value="4">IV</option>
+                                <option value="5">V</option>
+                                <option value="6">VI</option>
+                                <option value="7">VII</option>
+                                <option value="8">VIII</option>
+                                <option value="9">IX</option>
+                                <option value="10">X</option>
+                                <option value="11">XI</option>
+                                <option value="12">XII</option>
                             </select>
                         </div>
-                        <div>
-                            <label className="font-medium">Division:</label>
-                            <select name="division" defaultValue={selectedStudent.division} className="w-full px-2 py-1 border rounded">
-                                {['A', 'B', 'C', 'D', 'E'].map((division) => (
-                                    <option key={division} value={division}>{division}</option>
-                                ))}
-                            </select>
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="division">Division:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="text" id="division" name="division" defaultValue={selectedStudent.division} required />
                         </div>
-                        <div>
-                            <label className="font-medium">Roll Number:</label>
-                            <input type="number" name="rollNumber" defaultValue={selectedStudent.rollNumber} className="w-full px-2 py-1 border rounded"/>
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="rollNumber">Roll Number:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="number" id="rollNumber" name="rollNumber" defaultValue={selectedStudent.rollNumber} required />
                         </div>
-                        <div>
-                            <label className="font-medium">Address Line 1:</label>
-                            <input type="text" name="addressLine1" defaultValue={selectedStudent.addressLine1} className="w-full px-2 py-1 border rounded"/>
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="addressLine1">Address Line 1:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="text" id="addressLine1" name="addressLine1" defaultValue={selectedStudent.addressLine1} required />
                         </div>
-                        <div>
-                            <label className="font-medium">Address Line 2:</label>
-                            <input type="text" name="addressLine2" defaultValue={selectedStudent.addressLine2} className="w-full px-2 py-1 border rounded"/>
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="addressLine2">Address Line 2:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="text" id="addressLine2" name="addressLine2" defaultValue={selectedStudent.addressLine2} required />
                         </div>
-                        <div>
-                            <label className="font-medium">Landmark:</label>
-                            <input type="text" name="landmark" defaultValue={selectedStudent.landmark} className="w-full px-2 py-1 border rounded"/>
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="landmark">Landmark:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="text" id="landmark" name="landmark" defaultValue={selectedStudent.landmark} required />
                         </div>
-                        <div>
-                            <label className="font-medium">City:</label>
-                            <input type="text" name="city" defaultValue={selectedStudent.city} className="w-full px-2 py-1 border rounded"/>
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="city">City:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="text" id="city" name="city" defaultValue={selectedStudent.city} required />
                         </div>
-                        <div>
-                            <label className="font-medium">Pincode:</label>
-                            <input type="text" name="pincode" minLength={4} maxLength={6} defaultValue={selectedStudent.pincode} className="w-full px-2 py-1 border rounded"/>
+                        <div className="mb-2">
+                            <label className="block font-semibold mb-1" htmlFor="pincode">Pincode:</label>
+                            <input className="w-full p-2 border border-gray-200 rounded" type="text" id="pincode" name="pincode" defaultValue={selectedStudent.pincode} required />
                         </div>
-                        <div className="col-span-2">
-                            <button type="submit" className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Save</button>
-                            <button type="button" onClick={closeEditModal} className="mt-4 ml-4 px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                        <div className="flex justify-end col-span-1 lg:col-span-3">
+                            <button type="submit" className="px-4 py-2 bg-[#F33823] hover:text-[#F33823] hover:bg-white border-2 border-[#F33823] text-white rounded">Save</button>
+                            <button onClick={closeEditModal} className="ml-2 px-4 py-2 bg-gray-300 hover:bg-white hover:border text-black rounded">Cancel</button>
                         </div>
                     </form>
                 </Modal>
             )}
+
         </div>
     );
 };

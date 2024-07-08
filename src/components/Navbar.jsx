@@ -1,5 +1,8 @@
 import { NavLink } from "react-router-dom";
 import UseAuth from "../hook/UseAuth";
+import { GoPeople } from "react-icons/go";
+import { PiUserListLight } from "react-icons/pi";
+import { MdOutlineLogout } from "react-icons/md";
 
 const Navbar = () => {
     const { user, logOut } = UseAuth();
@@ -9,40 +12,47 @@ const Navbar = () => {
     };
 
     return (
-        <div className="flex justify-around items-center bg-gray-800 p-4">
+        <div className="flex flex-col items-center justify-center p-4 h-screen">
+            
+            <NavLink 
+                to="/addStudent" 
+                className={({ isActive }) => 
+                    isActive ? "text-white no-underline p-2 rounded bg-[#F33823] w-full text-left flex items-center" : "no-underline p-2 rounded hover:text-[#F33823] transition duration-300 w-full text-left flex items-center"
+                }
+            >
+                <GoPeople className="mr-2" />
+                <span>Add Student</span>
+            </NavLink>
+
+            <NavLink 
+                to="/manageStudent" 
+                className={({ isActive }) => 
+                    isActive ? "text-white no-underline p-2 rounded bg-[#F33823] w-full text-left flex items-center" : "no-underline p-2 rounded hover:text-[#F33823] transition duration-300 w-full text-left flex items-center"
+                }
+            >
+                <PiUserListLight className="mr-2" />
+                <span>Manage Student</span>
+            </NavLink>
+
             {!user ? (
                 <NavLink 
                     to="/" 
                     className={({ isActive }) => 
-                        isActive ? "text-white no-underline p-2 rounded bg-blue-500" : "text-white no-underline p-2 rounded hover:bg-gray-700 transition duration-300"
+                        isActive ? "text-white no-underline p-2 rounded bg-[#F33823] w-full text-left flex items-center" : "no-underline p-2 rounded hover:text-[#F33823] transition duration-300 w-full text-left flex items-center"
                     }
                 >
-                    Login
+                    <MdOutlineLogout className="mr-2" />
+                    <span>Login</span>
                 </NavLink>
             ) : (
                 <button 
                     onClick={handleLogout} 
-                    className="text-white no-underline p-2 rounded hover:bg-gray-700 transition duration-300"
+                    className="no-underline p-2 rounded hover:text-[#F33823] transition duration-300 w-full text-left flex items-center"
                 >
-                    Logout
+                    <MdOutlineLogout className="mr-2" />
+                    <span>Logout</span>
                 </button>
             )}
-            <NavLink 
-                to="/addStudent" 
-                className={({ isActive }) => 
-                    isActive ? "text-white no-underline p-2 rounded bg-blue-500" : "text-white no-underline p-2 rounded hover:bg-gray-700 transition duration-300"
-                }
-            >
-                Add Student
-            </NavLink>
-            <NavLink 
-                to="/manageStudent" 
-                className={({ isActive }) => 
-                    isActive ? "text-white no-underline p-2 rounded bg-blue-500" : "text-white no-underline p-2 rounded hover:bg-gray-700 transition duration-300"
-                }
-            >
-                Manage Student
-            </NavLink>
         </div>
     );
 };
